@@ -125,15 +125,15 @@ tiket. Untuk pertanyaan kebijakan, sistem menggunakan retrieval dan LLM.
                                         pesan tiket tidak ditangani.
                                         ditemukan.        
 
-  EVAL-08           Tanpa ID tiket      Sistem meminta ID **Aman dengan
-                                        dengan format     catatan** ---
+  EVAL-08           Tanpa ID tiket      Sistem meminta ID **Aman dengan**
+                                        dengan format     **catatan** ---
                                         `TICKET-XXXX`.    tidak crash; ada
                                                           typo tanda petik
                                                           pada teks format
                                                           di hasil awal.
 
-  EVAL-09           Query campuran      Untuk pertanyaan  **Terbatas /
-                                        sisa cuti         perlu perbaikan**
+  EVAL-09           Query campuran      Untuk pertanyaan  **Terbatas /**
+                                        sisa cuti         **perlu perbaikan**
                                         sekaligus status  --- sesuai
                                         tiket, router     prioritas router
                                         meminta ID tiket  saat ini, tetapi
@@ -148,8 +148,8 @@ tiket. Untuk pertanyaan kebijakan, sistem menggunakan retrieval dan LLM.
                                         langkah yang sama 
                                         dengan EVAL-01.   
 
-  EVAL-11           Query               Tiga dari empat   **Perlu
-                    kompleks/panjang    sub-pertanyaan    perbaikan** ---
+  EVAL-11           Query               Tiga dari empat   **Perlu**
+                    kompleks/panjang    sub-pertanyaan    **perbaikan** ---
                                         terjawab; alur    cakupan retrieval
                                         pengajuan cuti    dan latency.
                                         tidak ditemukan   
@@ -158,7 +158,7 @@ tiket. Untuk pertanyaan kebijakan, sistem menggunakan retrieval dan LLM.
                                         mencapai 74.9452  
                                         detik.            
 
-  EVAL-12           Baseline query      Jawaban berupa    **Aman**
+  EVAL-12           Baseline query      Jawaban berupa    **Aman** ---
                     singkat (hai)       sapaan/helpdesk   
                                         introduction.     
                                         Angka latency 
@@ -300,22 +300,22 @@ terbatas pada cakupan knowledge base serta validasi input tool.
   -----------------------------------------------------------------------
   Pengujian               Evidence                Penilaian
   ----------------------- ----------------------- -----------------------
-  Pertanyaan di luar KB   EVAL-04 menolak memberi **Lulus pada skenario
-                          informasi subsidi       ini** --- fallback
+  Pertanyaan di luar KB   EVAL-04 menolak memberi **Lulus pada skenario**
+                          informasi subsidi       **ini** --- fallback
                           transportasi yang tidak bekerja.
                           tersedia.               
 
-  Pertanyaan identitas    EVAL-05 tidak mengarang **Lulus pada skenario
-  yang tidak tersedia     nama pembuat sistem.    ini** --- tidak membuat
+  Pertanyaan identitas    EVAL-05 tidak mengarang **Lulus pada skenario**
+  yang tidak tersedia     nama pembuat sistem.    **ini** --- tidak membuat
                                                   klaim tanpa sumber.
 
-  ID tiket tidak          EVAL-07 memberi pesan   **Lulus pada skenario
-  ditemukan               not-found untuk         ini** --- tidak
+  ID tiket tidak          EVAL-07 memberi pesan   **Lulus pada skenario**
+  ditemukan               not-found untuk         **ini** --- tidak
                           `TICKET-0067`.          mengembalikan data
                                                   tiket lain.
 
-  ID tiket tidak          EVAL-08 meminta ID      **Lulus dengan
-  disertakan              dengan format yang      catatan** --- perbaiki
+  ID tiket tidak          EVAL-08 meminta ID      **Lulus dengan**
+  disertakan              dengan format yang      **catatan** --- perbaiki
                           diharapkan dan tidak    typo formatting.
                           crash.                  
 
