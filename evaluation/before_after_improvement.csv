@@ -1,0 +1,22 @@
+issue_id,issue_category,description,evidence_before,root_cause_hypothesis,action_taken,evidence_after,improvement_summary
+ISSUE-01,Relevansi,Tidak semua pertanyaan terjawab untuk query kompleks yang menanyakan > 3 pertanyaan sekaligus,"Saat diberikan pertanyaan ""Jelaskan alur pengajuan cuti dan cara melihat jatah cuti, apakah cuti sisa bisa di bawa ke tahun depan? dan apakah cuti bersama mengurangi jatah cuti tahunan?"" system menjawab 3 dari 4 pertanyaan saja ->
+1. **Cara melihat sisa cuti:** Anda dapat melihat sisa cuti secara *real-time* melalui portal HR pada menu 'Ringkasan Cuti Saya'.
+
+2. **Membawa sisa cuti ke tahun depan:** Sisa cuti dapat dibawa maksimal 6 hari ke tahun berikutnya, dengan ketentuan harus digunakan dalam kuartal pertama tahun tersebut.
+3. **Cuti bersama:** Cuti bersama dan libur nasional tidak mengurangi jatah cuti tahunan karyawan.
+4. **Alur pengajuan cuti:** Mohon maaf, saya tidak memiliki informasi yang cukup dari *knowledge base* mengenai alur pengajuan cuti","semantic search hanya membatasi top 3 konteks dari knowlodge-base paling relevan sehingga jika ada > 3 pertanyaan system tidak bisa menjawab, idealnya menambahkan fungsi dekomposisi query menjadi beberapa questions kemudian tiap question dilakukan semantic search terpisah kemudian hasilnya digabung sebagai konteks tetapi karena keterbatasan Waktu dan resource kita akan meningkatkan parameter top_k dari 3 menjadi 5",Tingkatkan top-k konteks saat retrieval untuk mengatasi query kompleks,"Jawaban system -> Berikut adalah penjelasan terkait pertanyaan Anda berdasarkan kebijakan perusahaan:
+
+**1. Alur Pengajuan Cuti**
+Pengajuan cuti dilakukan melalui portal HR internal dengan ketentuan sebagai berikut:
+1. Pengajuan dilakukan minimal 3 hari kerja sebelum tanggal cuti yang direncanakan.
+2. Pengajuan memerlukan persetujuan dari atasan langsung.
+
+**2. Cara Melihat Jatah Cuti**
+Sisa cuti Anda dapat dilihat secara *real-time* melalui portal HR pada menu 'Ringkasan Cuti Saya'.
+
+**3. Ketentuan Sisa Cuti Tahun Berikutnya**
+Sisa cuti yang tidak terpakai dapat dibawa ke tahun berikutnya dengan ketentuan maksimal 6 hari, dan harus digunakan dalam kuartal pertama tahun tersebut.
+
+**4. Cuti Bersama dan Jatah Cuti Tahunan**
+Cuti bersama dan libur nasional tidak mengurangi jatah cuti tahunan karyawan",Sistem kini mampu menjawab 4 pertanyaan
+ISSUE-02,Unexpected Input Handling,Sistem crash saat diberikan empty string,"Sistem memberikan 422 Unprocessable Content saat diberikan empty string, system menggunakan validasi pydantic min_length=1",system menggunakan validasi pydantic min_length=1,menghapus parameter min_length=1 dan query validator dan memberikan pesan default jika query empty string atau whitespace,"system memberikan response ""Halo! Aku adalah Helpdesk Internal. Masukkan pertanyaanmu terkait kebijakan perusahaan atau layanan IT.""",Sistem kini tetap memberikan pesan informatif walaupun user memberikan input empty string atau whitespace

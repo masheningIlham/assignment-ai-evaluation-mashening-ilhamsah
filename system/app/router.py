@@ -8,6 +8,7 @@ Pola ini mengikuti workflow router yang sudah dipelajari di Sesi 12.4:
 """
 
 import re
+import time
 from app.rag import answer_from_knowledge_base
 from app.tools import get_ticket_status
 
@@ -68,7 +69,13 @@ async def handle_query(query: str) -> dict:
     Fungsi utama yang dipanggil oleh endpoint /ask.
     Menjalankan intent detection, lalu merutekan ke RAG atau tool call yang sesuai.
     """
+    start_time = time.perf_counter()
     intent = await detect_intent(query)
+    routing_latency = time.perf_counter() - start_time
+
+    print("\n========== REQUEST METRICS ==========")
+    print(f"Routing Latency: {routing_latency:.4f} seconds")
+    print("=====================================\n")
 
     if intent == "ticket_status":
         # 🔧 TODO: ekstrak ticket_id dari query (misal menggunakan regex
@@ -79,7 +86,7 @@ async def handle_query(query: str) -> dict:
             return {
                 "status": "error",
                 "intent": "ticket_status",
-                "data": "Silakan sertakan ID tiket dengan format 'TICKET-XXXX agar dapat saya periksa'"
+                "data": "Silakan sertakan ID tiket dengan format 'TICKET-XXXX' agar dapat saya periksa"
             }
 
         data = get_ticket_status(ticket_id)

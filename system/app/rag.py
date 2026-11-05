@@ -15,6 +15,7 @@ from threading import Lock
 import pandas as pd
 import numpy as np
 import faiss
+import time
 from google import genai
 from dotenv import load_dotenv
 
@@ -151,21 +152,20 @@ def build_index():
         _index = index
 
 
-def semantic_search(query: str, top_k: int = 3):
+def semantic_search(query: str, top_k: int = 5):
     """
     # TODO: implementasikan semantic search terhadap index yang sudah dibangun.
     # Referensi: starter_notebook_semantic_search.ipynb, Section 5.
     """
     if not isinstance(query, str) or not query.strip():
             raise ValueError("Query must be a non-empty string.")
-    
-    if top_k < 1:
-        raise ValueError("top_k must be at least 1.")
 
     if _index is None:
         build_index()
 
+    start_time = time.perf_counter()
     query_embedding = _get_embedding(query).reshape(1, -1)
+    embedding_latency = time.perf_counter() - start_time
 
     if query_embedding.shape[1] != _index.d:
         raise ValueError(
@@ -176,7 +176,15 @@ def semantic_search(query: str, top_k: int = 3):
     faiss.normalize_L2(query_embedding)
 
     k = min(top_k, _index.ntotal)
+
+    start_time = time.perf_counter()
     scores, indices = _index.search(query_embedding, k)
+    retrieval_latency = time.perf_counter() - start_time
+
+    print("\n========== RETRIEVAL METRICS ==========")
+    print(f"Embedding Latency : {embedding_latency:.4f} seconds")
+    print(f"FAISS Latency     : {retrieval_latency:.4f} seconds")
+    print("=======================================\n")
 
     results = []
 
@@ -224,6 +232,8 @@ def _generate_answer(query, context):
     Berikan jawaban langsung, dengan menggunakan langkah-langkah bernomor saat menjelaskan suatu prosedur.
     """.strip()
 
+    start_time = time.perf_counter()
+
     response = client.models.generate_content(
         model=GENERATION_MODEL,
         contents=prompt,
@@ -232,10 +242,21 @@ def _generate_answer(query, context):
         },
     )
 
+    llm_latency = time.perf_counter() - start_time
+    input_tokens  = response.usage_metadata.prompt_token_count or 0
+    output_tokens = response.usage_metadata.candidates_token_count or 0
+    total_tokens  = response.usage_metadata.total_token_count or 0 
     answer = response.text
 
     if not answer or not answer.strip():
         raise RuntimeError("Gemini returned an empty answer.")
+
+    print("\n========== LLM METRICS ==========")
+    print(f"LLM Latency : {llm_latency:.4f} seconds")
+    print(f"Input Tokens: {input_tokens}")
+    print(f"Output Tokens: {output_tokens}")
+    print(f"Total Tokens: {total_tokens}")
+    print("=================================\n")
 
     return answer.strip()
 
@@ -252,7 +273,7 @@ async def answer_from_knowledge_base(query: str) -> str:
     if not isinstance(query, str) or not query.strip():
         raise ValueError("Query must be a non-empty string.")
 
-    results = await asyncio.to_thread(semantic_search, query, 3)
+    results = await asyncio.to_thread(semantic_search, query)
 
     if not results:
         return ("Aku tidak menemukan informasi yang relevan di knowledge base untuk menjawab pertanyaanmu.")

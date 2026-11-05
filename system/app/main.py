@@ -20,17 +20,16 @@ app = FastAPI(title="IT Helpdesk Assistant API")
 
 class AskRequest(BaseModel):
     query: str = Field(
-        min_length=1,
         description="Pertanyaan atau permintaan pengguna",
     )
 
-    @field_validator("query")
-    @classmethod
-    def validate_query(cls, value: str) -> str:
-        value = value.strip()
-        if not value:
-            raise ValueError("Query cannot be empty or whitespace.")
-        return value
+    # @field_validator("query")
+    # @classmethod
+    # def validate_query(cls, value: str) -> str:
+    #     value = value.strip()
+    #     if not value:
+    #         raise ValueError("Query cannot be empty or whitespace.")
+    #     return value
 
 
 class AskResponse(BaseModel):
@@ -55,6 +54,14 @@ async def ask(request: AskRequest):
     # TODO: tambahkan error handling untuk kondisi LLM gagal merespons
     # atau intent tidak dapat dikenali (lihat panduan error handling di Sesi 13.4)
     """
+    if not request.query.strip():
+        return {
+            "status": "success",
+            "intent": "greeting",
+            "data": "Halo! Aku adalah Helpdesk Internal. "
+                    "Masukkan pertanyaanmu terkait kebijakan perusahaan atau layanan IT."
+        }
+
     try:
         result = await handle_query(request.query)
         return AskResponse(**result)
