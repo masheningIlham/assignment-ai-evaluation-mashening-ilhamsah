@@ -265,9 +265,21 @@ Beberapa hal yang perlu diperhatikan:
 
 -   Jika sistem mendapatkan query kosong maka sistem memberikan pesan default
 
+| Komponen | Deskripsi |
+|---|---|
+| **Issue ID** | ISSUE-02 |
+| **Kategori** | Unexpected Input Handling |
+| **Permasalahan** | Sistem memberikan error `422 Unprocessable Content` ketika pengguna mengirimkan input berupa empty string atau whitespace. |
+| **Evidence Before** | Ketika menerima empty string, sistem mengembalikan HTTP 422 karena input tidak memenuhi validasi request. |
+| **Root Cause** | Sistem menggunakan validasi Pydantic `min_length=1` pada parameter `query`, sehingga input kosong ditolak sebelum diproses oleh router. Selain itu, belum terdapat mekanisme fallback untuk menangani input kosong atau whitespace. |
+| **Perbaikan yang Dilakukan** | Menghapus parameter `min_length=1` dan query validator, kemudian menambahkan penanganan khusus pada router untuk mendeteksi empty string atau whitespace. |
+| **Fallback Response** | Sistem memberikan pesan default: "Halo! Aku adalah Helpdesk Internal. Masukkan pertanyaanmu terkait kebijakan perusahaan atau layanan IT." |
+
+#### Perbandingan Before vs After
 
 **Before vs after:**
 
+| Aspek | Before | After |
 |---|---|---|
 | **Validasi input** | Menggunakan Pydantic `min_length=1`. | Validasi panjang minimum dihapus dan input kosong ditangani pada router. |
 | **Empty string** | Menghasilkan HTTP 422 Unprocessable Content. | Menghasilkan pesan default yang informatif. |
@@ -369,9 +381,5 @@ tersedia.
                           per intent/model        estimasi biaya
                                                   operasional dan budget
                                                   produksi.
-
-  P2                      Tambahkan observability Memudahkan tracing
-                          terstruktur             request dari router,
-                                                  retrieval, LLM, hingga
-                                                  tool call.
+                                                  
   -----------------------------------------------------------------------
